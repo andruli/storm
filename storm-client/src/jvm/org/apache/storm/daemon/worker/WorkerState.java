@@ -294,7 +294,7 @@ public class WorkerState {
     public CountDownLatch getIsWorkerActive() {
         return isWorkerActive;
     }
-    
+
     public AtomicBoolean getIsTopologyActive() {
         return isTopologyActive;
     }
@@ -382,7 +382,7 @@ public class WorkerState {
     public SmartThread makeTransferThread() {
         return workerTransfer.makeTransferThread();
     }
-    
+
     public void refreshConnections() {
         Assignment assignment = null;
         try {
@@ -539,6 +539,12 @@ public class WorkerState {
             AddressedTuple tuple = tupleBatch.get(i);
             JCQueue queue = taskToExecutorQueue.get(tuple.dest);
 
+            if (queue == null) {
+                LOG.error("[transferLocalBatch] queue is null");
+                LOG.error("[transferLocalBatch] Available taskIds: " + taskToExecutorQueue.keySet().toString());
+                LOG.error("[transferLocalBatch] Looking for taskId: " + Integer.toString(tuple.dest));
+            }
+
             // 1- try adding to main queue if its overflow is not empty
             if (queue.isEmptyOverflow()) {
                 if (queue.tryPublish(tuple)) {
@@ -644,7 +650,7 @@ public class WorkerState {
         LOG.info("Reading assignments");
         List<List<Long>> executorsAssignedToThisWorker = new ArrayList<>();
         executorsAssignedToThisWorker.add(Constants.SYSTEM_EXECUTOR_ID);
-        Map<List<Long>, NodeInfo> executorToNodePort = 
+        Map<List<Long>, NodeInfo> executorToNodePort =
             getLocalAssignment(stormClusterState, topologyId).get_executor_node_port();
         for (Map.Entry<List<Long>, NodeInfo> entry : executorToNodePort.entrySet()) {
             NodeInfo nodeInfo = entry.getValue();
