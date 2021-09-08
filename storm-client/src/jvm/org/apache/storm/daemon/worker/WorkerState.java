@@ -543,6 +543,7 @@ public class WorkerState {
                 LOG.error("[transferLocalBatch] queue is null");
                 LOG.error("[transferLocalBatch] Available taskIds: " + taskToExecutorQueue.keySet().toString());
                 LOG.error("[transferLocalBatch] Looking for taskId: " + Integer.toString(tuple.dest));
+                return;
             }
 
             // 1- try adding to main queue if its overflow is not empty
